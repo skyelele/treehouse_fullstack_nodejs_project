@@ -1,12 +1,14 @@
-var Profile = require("./profile.js");
+var Profile   = require("./profile.js");
+var renderer  = require("./renderer.js");
 
 //Handle HTTP route GET /and POST / i.e. Home
 function home(req, res) {
   if(req.url === "/") {
     res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.write("Header\n");
-    res.write("Search\n");
-    res.end("Footer\n");
+    renderer.view("header", {}, res);
+    renderer.view("search", {}, res);
+    renderer.view("footer", {}, res);
+    res.end();
   }
 }
 
@@ -15,7 +17,7 @@ function user(req, res) {
   var username = req.url.replace("/", "");
   if(username.length > 0) {
     res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.write("Header\n");
+    renderer.view("header", {}, res);
    //get json from Treehouse
     var studentProfile = new Profile(username);
     //on "end"
@@ -31,13 +33,16 @@ function user(req, res) {
       }
       // simple response
       // (we need to write an END to EVERY callback that we use)
-      res.write(values.username + " has " + values.badges + " badges\n");;
-      res.end("Footer\n");
+      renderer.view("profile", values, res);
+      renderer.view("footer", {}, res);
+      res.end();
     });
     studentProfile.on("error", function(error){
     //show error
-      res.write(error.message + "\n");
-      res.end("Footer\n");
+      renderer.view("error", {errorMessage: error.message}, res);
+      renderer.view("search", {}, res);
+      renderer.view("footer", {}, res);
+      res.end();
     });
   }
 };
