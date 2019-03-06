@@ -10,6 +10,12 @@
  * accessible by other files.
  */
 
+/**
+ *  Finally, in the index.js file, make
+ *  sure that the about route is being 
+ *  handled by the HTTP server.
+ */
+
 function root(request, response) {
     if(request.url == "/") {
         response.writeHead(200, {'Content-type': "text"});
